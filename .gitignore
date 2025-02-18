@@ -1,0 +1,5 @@
+# Escludi l'ambiente virtuale
+myenv/
+
+# Escludi il file delle variabili d'ambiente
+.env
