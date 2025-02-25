@@ -1,19 +1,10 @@
-import os
-from dotenv import load_dotenv  # importa la libreria per caricare le variabili dal file .env
 import streamlit as st
 import pandas as pd
 from supabase import create_client, Client
 
-# Carica le variabili d'ambiente dal file .env
-load_dotenv()
-
-# Legge le credenziali dalle variabili d'ambiente
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-
-if not SUPABASE_URL or not SUPABASE_KEY:
-    st.error("Le credenziali di Supabase non sono state configurate correttamente.")
-    st.stop()
+# Imposta le credenziali per Supabase
+SUPABASE_URL = "https://roousoojawkidfmewghh.supabase.co"
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJvb3Vzb29qYXdraWRmbWV3Z2hoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQxMTY0MTgsImV4cCI6MjA0OTY5MjQxOH0.O-k7O19h9d_KVjVNzJ0NBHf1-WPdhY-cicT4R13E6s8"
 
 # Crea il client Supabase
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
@@ -33,6 +24,13 @@ required_columns = {"store_id", "month", "total_value"}
 if not df.empty and required_columns.issubset(df.columns):
     st.subheader("Table de Données")
     st.dataframe(df)
+    
+    # Raggruppa per store e somma il total_value su tutti i mesi
+    df_store = df.groupby("store_id")["total_value"].sum().reset_index()
+    
+    st.subheader("Valeur pour Magasin")
+    st.dataframe(df_store)
+    st.bar_chart(df_store.set_index("store_id"))
     
     # Visualizza i dati mensili per un determinato store
     store_id_selected = st.selectbox("Seleziona Store ID", df["store_id"].unique())
